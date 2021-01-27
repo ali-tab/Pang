@@ -23,15 +23,17 @@ class pongServer{
     xVel = 0;
     yVel = 0;
     destTime = 0;
-    BCF;
     prevTime = 0;
-
-
+    BCF;
 
     constructor(address, port, ballCoordFunction, opPaddle, playerLeft, startGame){
 
         this.BCF = ballCoordFunction;
-        window.setTimeout(this.timeOutFunc,16);
+
+        //var d = new Date();
+        //var curTime = d.getTime();
+        //this.prevTime = curTime;
+        
         this.isConnected = false;
         this.socket=new WebSocket('ws://'+address+':'+port);
         this.socket.addEventListener('open',e=>{
@@ -103,6 +105,9 @@ class pongServer{
             }
 
         });
+
+        setInterval(this.timeOutFunc, 16, ballCoordFunction);
+
     }
     //Used to move the paddle to a location
     movePaddle(x,y){
@@ -117,25 +122,21 @@ class pongServer{
 
     }
 
-    timeOutFunc(){
+    getBallData(){
 
-        if (this.destTime > 0 && this.prevTime > 0){
-            
-            var d = new Date();
-            var curTime = d.getTime();
-            
-            deltaX = (curTime - this.prevTime) * this.xVel;
-            deltaY = (curTime - this.prevTime) * this.yVel;
+        var out = {
+            bX: this.bX,
+            bY: this.bY,
+            xVel: this.xVel,
+            yVel: this.yVel,
+            destTime : this.destTime
 
-            this.bX += deltaX;
-            this.bY += deltaY;
+        };
 
-            this.BCF(this.bX,this.bY);
-            this.prevTime = curTime;
-        }
-
-        window.setTimeout(this.timeOutFunc, 16);
+        return out;
     }
+
+
 
 }
 

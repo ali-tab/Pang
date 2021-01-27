@@ -43,6 +43,8 @@ var playSide;
 
 var hasOp = false;
 
+var prevTime = 0;
+
 window.addEventListener( 'resize', onWindowResize, false );
 
 function onWindowResize(){
@@ -85,7 +87,6 @@ var multiplayersetup = function (){
     
     document.getElementById("multiscore").style.visibility = 'visible';
     document.getElementById("multiscore").innerHTML = "0 - 0";
-
 
     s = new pongServer("server ip", "server port", ballCoordFunction, opPaddle, playerLeft, startGame);
 
@@ -336,7 +337,8 @@ var multiplayer = function () {
 
     //moving paddle1 - limit set at 5 and -5
 
-     
+    ball.position.x = updateCoords.bX;
+    ball.position.y = updateCoords.bY;
 
     if (playSide == 0){
 
@@ -384,7 +386,7 @@ var multiplayer = function () {
             }
         }
     }
-    
+ 
 /*
     //moving paddle2 - limit set at 5 and -5
     if (uppressed && paddle2.position.y < 4){
@@ -397,55 +399,52 @@ var multiplayer = function () {
         paddle2.position.y -= 0.3;
 
     }
-*/
+
     //hit detection
-//    var p1xcondition = ball.position.x > paddle1.position.x && ball.position.x < paddle1.position.x + 1;
-//    var p1ycondition = paddle1.position.y-3 <= ball.position.y && ball.position.y <= (paddle.position.y + 3);
-//
-//    //setting ball's yspeed and xspeed after collision
-//    if (p1xcondition && p1ycondition)
-//    {
-//        
-//    ydist = ball.position.y - paddle1.position.y;
-//
-//    yspeed = -speed * (ydist / 3);
-//    xspeed = Math.abs(speed * (1 - Math.abs(ydist / 3)));
-//
-//    //yspeed = Math.sin(angle) * speed;
-//    //xspeed = Math.sin(angle) * speed;
-//
-//    }
-//
-//    var p2xcondition = ball.position.x < paddle2.position.x && ball.position.x > paddle2.position.x - 1;
-//    var p2ycondition = paddle2.position.y-3 <= ball.position.y && ball.position.y <= (paddle2.position.y + 3);
-//
-//    //setting ball's yspeed and xspeed after collision
-//    if (p2xcondition && p2ycondition)
-//    {
-//
-//    ydist = ball.position.y - paddle2.position.y;
-//        
-//    yspeed = speed * (ydist / 3);
-//    xspeed = -1*Math.abs(speed * (1 - Math.abs(ydist / 3)));
-//
-//    }
+    var p1xcondition = ball.position.x > paddle1.position.x && ball.position.x < paddle1.position.x + 1;
+    var p1ycondition = paddle1.position.y-3 <= ball.position.y && ball.position.y <= (paddle.position.y + 3);
 
-//    if (ball.position.x > 15)
-//    {
-//    xspeed = xspeed * -1;
-//    }
-//
-//    if (ball.position.x < -15)
-//    {
-//    scene.remove(ball);
-//    scene.remove(paddle);
-//    document.getElementById("gameovertext").style.visibility = 'visible';
-//
-//    }
+    //setting ball's yspeed and xspeed after collision
+    if (p1xcondition && p1ycondition)
+    {
+        
+    ydist = ball.position.y - paddle1.position.y;
 
-    if (ball.position.y > 7 || ball.position.y < -7){
-        yspeed = yspeed * -1;
+    yspeed = -speed * (ydist / 3);
+    xspeed = Math.abs(speed * (1 - Math.abs(ydist / 3)));
+
+    //yspeed = Math.sin(angle) * speed;
+    //xspeed = Math.sin(angle) * speed;
+
     }
+
+    var p2xcondition = ball.position.x < paddle2.position.x && ball.position.x > paddle2.position.x - 1;
+    var p2ycondition = paddle2.position.y-3 <= ball.position.y && ball.position.y <= (paddle2.position.y + 3);
+
+    //setting ball's yspeed and xspeed after collision
+    if (p2xcondition && p2ycondition)
+    {
+
+    ydist = ball.position.y - paddle2.position.y;
+        
+    yspeed = speed * (ydist / 3);
+    xspeed = -1*Math.abs(speed * (1 - Math.abs(ydist / 3)));
+
+    }
+
+    if (ball.position.x > 15)
+    {
+    xspeed = xspeed * -1;
+    }
+
+    if (ball.position.x < -15)
+    {
+    scene.remove(ball);
+    scene.remove(paddle);
+    document.getElementById("gameovertext").style.visibility = 'visible';
+
+    }
+*/
 
     ball.rotation.y += 0.01;
     ball.rotation.x += 0.01;
@@ -453,6 +452,42 @@ var multiplayer = function () {
 
     renderer.render( scene, camera );
 };
+
+
+
+
+var updateCoords = function(){
+
+    var d = new Date();
+    var curTime = d.getTime();
+
+    var out = s.getBallData();
+
+    var bX = out.bX;
+    var bY = out.bY;
+    var xVel = out.xVel;
+    var yVel = out.yVel;
+    var destTime = out.destTime;
+
+
+    if (curTime > destTime && this.prevTime > 0){
+
+        var deltaX = (curTime - this.prevTime) * xVel;
+        var deltaY = (curTime - this.prevTime) * yVel;
+
+        bX += deltaX;
+        bY += deltaY;
+    }
+
+    prevTime = curTime;
+
+    return {
+        bX,
+        bY
+    };
+
+}
+
 
 document.getElementById("singleplay").addEventListener("click", singleplayersetup);
 document.getElementById("singleplay").addEventListener("click", singleplayer);
