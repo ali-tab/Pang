@@ -67,7 +67,7 @@
 			position:absolute;
 			}
 
-			img{
+			.title{
 			left: 50%;
 			transform: translateX(-50%);
 			top: 50px;
@@ -77,29 +77,39 @@
 			position:absolute;
 			}
 
-			opLeftText {
-			position: absolute;
-    		display: block;
-    		z-index: 99;
+			.background{
 			left: 50%;
 			transform: translateX(-50%);
-			top: 300px;
+			top: 50px;
+ 			padding: 19px;
+			z-index: 99;
 			text-align: center;
-			color: black;
-			background-color: rgb(0, 255, 0);
+			position:absolute;
+			}
+
+			.opLeftText {
+			position: absolute;
+    		display: block;
+    		z-index: 80;
+			left: 50%;
+			transform: translateX(-50%);
+			top: 270px;
+			text-align: center ;
+			color: white;
 			padding: 15px 32px;
 			font-family: Lucida, monospace;
 			font-size: 20px;
 			user-select: none; /* Standard */
    			}
 
+
 		</style>
 	
 	</head>
 	<body>
 
-
-		<img src = "pangtitle.png", id="title">
+		<img src = "pangtitle.png" class = "title", id="title">
+		
 
 		<div class="spbutton", id="singleplay">
 		<p>
@@ -118,7 +128,7 @@
 		</div>
 		
 		<div class="opLeftText", id="opLeftText">
-			<p>Your opponent has left. :()
+			<p>Your opponent has left. :(
 			</p>
 			</div>
 			

@@ -101,14 +101,15 @@ class pongServer{
                 this.xVel = numList[2];
                 this.yVel = numList[3];
                 this.destTime = numList[4];
+                
+                ballCoordFunction(this.bX, this.bY, this.xVel, this.yVel, this.destTime);
 
             }
 
         });
 
-        setInterval(this.timeOutFunc, 16, ballCoordFunction);
-
     }
+
     //Used to move the paddle to a location
     movePaddle(x,y){
         let toSend="p"+x+","+y;
@@ -121,22 +122,6 @@ class pongServer{
         this.socket.send("f");
 
     }
-
-    getBallData(){
-
-        var out = {
-            bX: this.bX,
-            bY: this.bY,
-            xVel: this.xVel,
-            yVel: this.yVel,
-            destTime : this.destTime
-
-        };
-
-        return out;
-    }
-
-
 
 }
 

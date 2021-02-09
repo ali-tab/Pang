@@ -45,6 +45,14 @@ var hasOp = false;
 
 var prevTime = 0;
 
+var mbX = 0;
+var mbY = 0;
+
+var mvX = 0;
+var mvY = 0;
+
+var hasCollided = false;
+
 window.addEventListener( 'resize', onWindowResize, false );
 
 function onWindowResize(){
@@ -88,7 +96,7 @@ var multiplayersetup = function (){
     document.getElementById("multiscore").style.visibility = 'visible';
     document.getElementById("multiscore").innerHTML = "0 - 0";
 
-    s = new pongServer("server ip", "server port", ballCoordFunction, opPaddle, playerLeft, startGame);
+    s = new pongServer("insert ip here", "insert port here", ballCoordFunction, opPaddle, playerLeft, startGame);
 
     scene.add( paddle1 );
     scene.add( paddle2 );
@@ -97,7 +105,6 @@ var multiplayersetup = function (){
     scene.add(lines1);
     scene.add(lines2);
 
-
     window.setTimeout(function(){
 
         s.findGame();
@@ -105,14 +112,15 @@ var multiplayersetup = function (){
 
     }, 500);
 
-
 };
 
-function ballCoordFunction (x, y){
+function ballCoordFunction (x, y, xVel, yVel){
 
-    //console.log(x, y);
-    ball.position.x = x;
-    ball.position.y = y;
+    mbX = parseFloat(x);
+    mbY = parseFloat(y);
+    mvX = parseFloat(xVel);
+    mvY = parseFloat(yVel);
+    hasCollided = true;
     
 };
 
@@ -123,8 +131,6 @@ function opPaddle(x, y){
         paddle2.position.y = y;
         lines2.position.x = x;
         lines2.position.y = y;
-
-
     }
 
     if (playSide == 1){
@@ -337,8 +343,19 @@ var multiplayer = function () {
 
     //moving paddle1 - limit set at 5 and -5
 
-    ball.position.x = updateCoords.bX;
-    ball.position.y = updateCoords.bY;
+    if (hasCollided == true){
+        ball.position.x = mbX;
+        ball.position.y = mbY;
+        hasCollided = false;
+    }
+
+    console.log(hasCollided);
+
+    ball.position.x += mvX;
+    ball.position.y += mvY;
+
+
+    console.log(ball.position.x + ", " + ball.position.y);
 
     if (playSide == 0){
 
@@ -452,41 +469,6 @@ var multiplayer = function () {
 
     renderer.render( scene, camera );
 };
-
-
-
-
-var updateCoords = function(){
-
-    var d = new Date();
-    var curTime = d.getTime();
-
-    var out = s.getBallData();
-
-    var bX = out.bX;
-    var bY = out.bY;
-    var xVel = out.xVel;
-    var yVel = out.yVel;
-    var destTime = out.destTime;
-
-
-    if (curTime > destTime && this.prevTime > 0){
-
-        var deltaX = (curTime - this.prevTime) * xVel;
-        var deltaY = (curTime - this.prevTime) * yVel;
-
-        bX += deltaX;
-        bY += deltaY;
-    }
-
-    prevTime = curTime;
-
-    return {
-        bX,
-        bY
-    };
-
-}
 
 
 document.getElementById("singleplay").addEventListener("click", singleplayersetup);
